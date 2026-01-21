@@ -14,7 +14,7 @@
   rdfs:label "Beast Mode Core Ontology" ;
   rdfs:comment "A core ontology defining the fundamental entities and relationships in the Beast Mode system. Beast Mode is a system for modeling autonomous agents, their capabilities, and the tasks they can perform." ;
   owl:versionInfo "1.0.0" ;
-  dcterms:created "2024-01-01"^^xsd:date ;
+  dcterms:created "2024-01-01T00:00:00"^^xsd:dateTime ;
   dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
   dcterms:creator "Beast Mode Core Team" .
 
@@ -477,7 +477,7 @@ dcterms:modified a owl:DatatypeProperty ;
   sh:targetClass :Agent ;
   sh:rule [
     a sh:SPARQLRule ;
-    sh:sparql """
+    sh:construct """
       PREFIX : <http://example.org/beast-mode#>
       CONSTRUCT {
         ?agent :canPerformTask ?task
