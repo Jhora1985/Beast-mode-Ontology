@@ -1,0 +1,18 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix bmmsg: <http://example.org/beast-messaging#> .
+
+bmmsg:AgentA_Address a bmmsg:Address ; rdfs:label "Agent A Address" .
+bmmsg:AgentB_Address a bmmsg:Address ; rdfs:label "Agent B Address" .
+
+bmmsg:Msg001 a bmmsg:Message ;
+  bmmsg:payloadType "TaskRequest" ;
+  bmmsg:hasEnvelope bmmsg:Env001 .
+
+bmmsg:Env001 a bmmsg:Envelope ;
+  bmmsg:sender bmmsg:AgentA_Address ;
+  bmmsg:receiver bmmsg:AgentB_Address ;
+  bmmsg:correlationId "corr-001" ;
+  bmmsg:timestamp "2026-01-27T21:00:00-05:00"^^xsd:dateTime ;
+  bmmsg:deliveryState bmmsg:Queued .

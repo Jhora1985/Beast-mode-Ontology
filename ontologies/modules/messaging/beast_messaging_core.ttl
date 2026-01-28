@@ -1,0 +1,77 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix bmmsg: <http://example.org/beast-messaging#> .
+
+bmmsg:BeastMessagingCore
+  a owl:Ontology ;
+  rdfs:label "Beast Messaging Core" ;
+  rdfs:comment "Bow-tie knot: canonical messaging vocabulary for Beast Mode (small, stable core)." .
+
+bmmsg:Message a owl:Class ;
+  rdfs:label "Message" ;
+  rdfs:comment "Canonical routed message." .
+
+bmmsg:Envelope a owl:Class ;
+  rdfs:label "Envelope" ;
+  rdfs:comment "Message metadata (sender/receiver/correlation/timestamp, etc.)." .
+
+bmmsg:Address a owl:Class ;
+  rdfs:label "Address" ;
+  rdfs:comment "Endpoint identifier for routing (agent/service/queue/topic)." .
+
+bmmsg:Channel a owl:Class ;
+  rdfs:label "Channel" ;
+  rdfs:comment "Transport or logical channel (queue/topic/bus/etc.)." .
+
+bmmsg:DeliveryState a owl:Class ;
+  rdfs:label "Delivery State" ;
+  rdfs:comment "Delivery lifecycle state." .
+
+bmmsg:hasEnvelope a owl:ObjectProperty ;
+  rdfs:label "has envelope" ;
+  rdfs:domain bmmsg:Message ;
+  rdfs:range bmmsg:Envelope .
+
+bmmsg:sender a owl:ObjectProperty ;
+  rdfs:label "sender" ;
+  rdfs:domain bmmsg:Envelope ;
+  rdfs:range bmmsg:Address .
+
+bmmsg:receiver a owl:ObjectProperty ;
+  rdfs:label "receiver" ;
+  rdfs:domain bmmsg:Envelope ;
+  rdfs:range bmmsg:Address .
+
+bmmsg:viaChannel a owl:ObjectProperty ;
+  rdfs:label "via channel" ;
+  rdfs:domain bmmsg:Envelope ;
+  rdfs:range bmmsg:Channel .
+
+bmmsg:deliveryState a owl:ObjectProperty ;
+  rdfs:label "delivery state" ;
+  rdfs:domain bmmsg:Envelope ;
+  rdfs:range bmmsg:DeliveryState .
+
+bmmsg:correlationId a owl:DatatypeProperty ;
+  rdfs:label "correlation id" ;
+  rdfs:domain bmmsg:Envelope ;
+  rdfs:range xsd:string .
+
+bmmsg:timestamp a owl:DatatypeProperty ;
+  rdfs:label "timestamp" ;
+  rdfs:domain bmmsg:Envelope ;
+  rdfs:range xsd:dateTime .
+
+bmmsg:payloadType a owl:DatatypeProperty ;
+  rdfs:label "payload type" ;
+  rdfs:domain bmmsg:Message ;
+  rdfs:range xsd:string .
+
+bmmsg:Queued     a bmmsg:DeliveryState ; rdfs:label "Queued" .
+bmmsg:Delivered  a bmmsg:DeliveryState ; rdfs:label "Delivered" .
+bmmsg:Acked      a bmmsg:DeliveryState ; rdfs:label "Acked" .
+bmmsg:Failed     a bmmsg:DeliveryState ; rdfs:label "Failed" .
+bmmsg:DeadLetter a bmmsg:DeliveryState ; rdfs:label "Dead Letter" .
