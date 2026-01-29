@@ -1,12 +1,56 @@
 # Beast Mode Core Ontology
 
-A core ontology defining the fundamental entities and relationships in the Beast Mode system, with comprehensive SHACL constraints for data validation.
+The core ontology for the Beast Mode ecosystem, defining how agents, capabilities, and tasks are explicitly modeled and validated using RDF and SHACL.
 
 ## Overview
 
-Beast Mode is a system for modeling autonomous agents, their capabilities, and the tasks they can perform. This ontology provides the foundational structure for understanding how agents operate within the Beast Mode framework.
+Beast Mode is a declarative, ontology-first framework for modeling agents, what they are capable of, and the tasks those capabilities enable.
 
-The ontology is implemented in **Turtle (TTL)** format with **SHACL (Shapes Constraint Language)** validation constraints, making it suitable for use in semantic web applications, knowledge graphs, and RDF-based systems.
+Rather than treating agents as opaque executors or relying on implicit inference, Beast Mode emphasizes **explicit structure**:
+
+- Agents declare capabilities  
+- Capabilities enable tasks  
+- Tasks define clear inputs and outputs  
+- Relationships are validated, not assumed  
+
+This core ontology establishes the foundational vocabulary and constraints for the Beast Mode ecosystem. It is intentionally minimal, focusing on *what exists* and *how it may relate*, not on execution, orchestration, or runtime behavior.
+
+The ontology is implemented in **Turtle (TTL)** with **SHACL (Shapes Constraint Language)** constraints, allowing systems to validate data correctness, completeness, and architectural intent before any execution layer is involved.
+
+---
+
+## Design Principles
+
+The Beast Mode Core Ontology is guided by a small set of design principles:
+
+- **Declarative over inferred**  
+  All relationships are explicitly stated. Inference is a downstream concern.
+
+- **Validation before execution**  
+  SHACL constraints act as architectural guardrails, ensuring data correctness and intent alignment.
+
+- **Separation of concerns**  
+  This ontology defines structure and meaning only. Messaging, networking, and execution live elsewhere.
+
+- **Composable, not monolithic**  
+  The core ontology is designed to be extended by additional vocabularies and implementation layers.
+
+---
+
+## What This Ontology Is (and Is Not)
+
+**This ontology is:**
+- A semantic model for agents, capabilities, and tasks
+- A shared vocabulary for aligning humans and systems
+- A validation layer for architectural correctness
+
+**This ontology is not:**
+- An agent runtime
+- A workflow engine
+- An orchestration or scheduling system
+- An execution framework
+
+---
 
 ## Core Entities
 
@@ -26,6 +70,8 @@ An autonomous or semi-autonomous actor in Beast Mode. Agents possess capabilitie
 - `createdAt` (dateTime): Creation timestamp
 - `updatedAt` (dateTime): Last update timestamp
 
+---
+
 ### Capability
 A bounded skill that an agent can perform. Capabilities serve as the bridge between agents and the tasks they can execute.
 
@@ -41,6 +87,8 @@ A bounded skill that an agent can perform. Capabilities serve as the bridge betw
 - `tags` (string): Tags or keywords
 - `createdAt` (dateTime): Creation timestamp
 - `updatedAt` (dateTime): Last update timestamp
+
+---
 
 ### Task
 A unit of work with a clear input and output. Tasks represent the atomic operations that agents can perform through their capabilities.
@@ -60,93 +108,13 @@ A unit of work with a clear input and output. Tasks represent the atomic operati
 - `createdAt` (dateTime): Creation timestamp
 - `updatedAt` (dateTime): Last update timestamp
 
+---
+
 ## Relationships
 
-- **Agent → Capability** (`hasCapability`): One-to-many relationship
-- **Capability → Task** (`enablesTask`): One-to-many relationship
-- **Task → Capability** (`requiresCapability`): Many-to-one relationship (inverse of enablesTask)
-- **Agent → Task** (`performsTask`): Derived relationship through capabilities
+- **Agent → Capability** (`hasCapability`): One-to-many  
+- **Capability → Task** (`enablesTask`): One-to-many  
+- **Task → Capability** (`requiresCapability`): Many-to-one (inverse of enablesTask)  
+- **Agent → Task** (`performsTask`): Derived relationship through capabilities  
 
-## Structure
-
-```
-Agent
-  └── hasCapability → Capability
-        └── enablesTask → Task
-              └── requiresCapability → Capability (inverse)
-```
-
-## Files
-
-- `beast_mode_ontology.ttl` - Core ontology with SHACL constraints (main file)
-- `beast_mode_examples.ttl` - Example instances demonstrating usage
-- `beast_mode_core.md` - Original markdown definitions (legacy)
-- `README.md` - This file
-
-## Usage
-
-### Loading the Ontology
-
-The ontology can be loaded into any RDF-compatible system:
-
-```bash
-# Using Apache Jena
-riot --validate beast_mode_ontology.ttl
-
-# Using rdflib (Python)
-from rdflib import Graph
-g = Graph()
-g.parse("beast_mode_ontology.ttl", format="turtle")
-```
-
-### Validating Data with SHACL
-
-The ontology includes SHACL shapes for data validation:
-
-```python
-# Example using pyshacl
-import pyshacl
-shapes_graph = Graph().parse("beast_mode_ontology.ttl", format="turtle")
-data_graph = Graph().parse("beast_mode_examples.ttl", format="turtle")
-results = pyshacl.validate(data_graph, shacl_graph=shapes_graph)
-```
-
-### Namespace
-
-The ontology uses the namespace: `http://example.org/beast-mode#`
-
-You can customize this by updating the `@prefix :` declaration in the TTL file.
-
-## SHACL Constraints
-
-The ontology includes comprehensive SHACL validation constraints:
-
-1. **Node Shapes**: Validation rules for each class (Agent, Capability, Task)
-2. **Property Shapes**: Constraints on relationships and datatype properties
-3. **Cardinality Constraints**: Minimum/maximum counts for properties
-4. **Data Type Validation**: Ensures correct data types (string, dateTime)
-5. **Value Constraints**: Status values must be from allowed enumeration
-
-## Example Instances
-
-See `beast_mode_examples.ttl` for complete examples including:
-- Code Review Agent with multiple capabilities
-- Data Processing Agent
-- Various tasks demonstrating the Agent → Capability → Task pattern
-
-## Extending the Ontology
-
-To extend this ontology for your specific use case:
-
-1. **Add new classes**: Define subclasses or new classes as needed
-2. **Add properties**: Extend with domain-specific properties
-3. **Update SHACL shapes**: Add validation constraints for new properties
-4. **Customize namespace**: Update the namespace URI to your domain
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit issues or pull requests.
-
-## License
-
-[Add your license here]
+### Conceptual Structure
