@@ -16,8 +16,12 @@
   owl:versionInfo "1.0.0" ;
   dcterms:created "2024-01-01T00:00:00"^^xsd:dateTime ;
   dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
-  dcterms:creator "Beast Mode Core Team" .
-
+  dcterms:creator "Beast Mode Core Team" ;
+  owl:imports <ontologies/modules/messaging/beast_messaging_core.ttl> ;
+  owl:imports <ontologies/modules/messaging/beast_mailbox_impl.ttl> ;
+  owl:imports <ontologies/modules/network/beast_network_core.ttl> ;
+  owl:imports <ontologies/wiring/beast_mode_messaging_wiring.ttl> .
+  
 ########################################################################
 # Classes
 ########################################################################

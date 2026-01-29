@@ -1,0 +1,83 @@
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+
+@prefix beast:     <https://example.org/beast#> .
+@prefix messaging: <https://example.org/beast/messaging#> .
+
+#################################################################
+# SHACL Shapes: A2A readiness checks
+#
+# Purpose
+# - Lint that A2AChannel has the minimum metadata needed to be used.
+# - Lint that AgentCardProjection includes basic identity fields.
+#
+# Notes
+# - These shapes validate structure, not network reachability.
+# - Deployment config (auth tokens, certs) lives outside the ontology.
+#################################################################
+
+beast:A2AChannelShape
+  a sh:NodeShape ;
+  sh:targetClass beast:A2AChannel ;
+  rdfs:label "A2A Channel shape" ;
+  rdfs:comment "Validates that an A2AChannel has enough metadata to be usable." ;
+
+  sh:property [
+    sh:path beast:endpointUrl ;
+    sh:minCount 1 ;
+    sh:datatype xsd:anyURI ;
+    sh:message "A2AChannel must have beast:endpointUrl (xsd:anyURI)." ;
+  ] ;
+
+  sh:property [
+    sh:path beast:agentCardUrl ;
+    sh:minCount 1 ;
+    sh:datatype xsd:anyURI ;
+    sh:message "A2AChannel should publish beast:agentCardUrl (xsd:anyURI) for discovery." ;
+  ] ;
+
+  sh:property [
+    sh:path beast:requiresAuthentication ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:boolean ;
+    sh:message "beast:requiresAuthentication must be a boolean (optional)." ;
+  ] ;
+
+  sh:property [
+    sh:path beast:authScheme ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:string ;
+    sh:message "beast:authScheme must be a string (optional)." ;
+  ] ;
+
+  sh:property [
+    sh:path beast:supportsStreaming ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:boolean ;
+    sh:message "beast:supportsStreaming must be a boolean (optional)." ;
+  ] ;
+.
+
+beast:AgentCardProjectionShape
+  a sh:NodeShape ;
+  sh:targetClass beast:AgentCardProjection ;
+  rdfs:label "AgentCard Projection shape" ;
+  rdfs:comment "Validates minimal identity fields for an AgentCardProjection." ;
+
+  sh:property [
+    sh:path beast:cardName ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:message "AgentCardProjection must have beast:cardName." ;
+  ] ;
+
+  sh:property [
+    sh:path beast:cardDescription ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:message "AgentCardProjection should have beast:cardDescription." ;
+  ] ;
+.

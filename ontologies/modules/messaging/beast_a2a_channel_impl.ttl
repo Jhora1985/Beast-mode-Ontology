@@ -1,0 +1,279 @@
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+
+@prefix beast:     <https://example.org/beast#> .
+@prefix messaging: <https://example.org/beast/messaging#> .
+@prefix network:   <https://example.org/beast/network#> .
+
+#################################################################
+# Beast Mode: A2A Channel Implementation
+#
+# Purpose
+# - Introduces an "edge transport" channel for Agent2Agent (A2A) protocol.
+# - This does NOT replace internal transports (e.g., Redis Streams).
+# - It provides a standard way to describe *remote agent interoperability*
+#   using the same Message/Envelope/Channel vocabulary you already built.
+#
+# Conceptual Fit (Beast Mode)
+# - Internal bus: RedisStreamChannel (high-volume, ordered, replayable)
+# - Edge/interop: A2AChannel (cross-team/vendor agents, HTTP-ish boundary)
+#
+# Why model AgentCard separately?
+# - A2A Agent Cards are JSON metadata documents.
+# - In Beast Mode, we represent the meaning/structure as RDF classes so we
+#   can validate, reason, and align to capabilities/tasks cleanly.
+#################################################################
+
+beast_a2a_channel_impl:Ontology
+  a owl:Ontology ;
+  rdfs:label "Beast A2A Channel Implementation" ;
+  rdfs:comment
+    "Adds A2AChannel and AgentCardProjection to the Beast messaging ecosystem. Use this when Beast agents communicate with external/remote agents via the A2A protocol." ;
+.
+
+#################################################################
+# Channel Implementation: A2A
+#################################################################
+
+beast:A2AChannel
+  a owl:Class ;
+  rdfs:subClassOf messaging:Channel ;
+  rdfs:label "A2A Channel" ;
+  rdfs:comment
+    "A Channel implemented using the Agent2Agent (A2A) protocol. Best used as an edge/interoperability transport for remote agents and cross-system collaboration." ;
+.
+
+beast:AgentCardProjection
+  a owl:Class ;
+  rdfs:label "AgentCard Projection" ;
+  rdfs:comment
+    "RDF representation of key semantics of an A2A Agent Card (which is typically JSON). Used for validation, discovery, and capability matching inside Beast Mode." ;
+.
+
+#################################################################
+# Properties: endpoints, discovery, auth, and operations
+#################################################################
+
+beast:endpointUrl
+  a owl:DatatypeProperty ;
+  rdfs:domain beast:A2AChannel ;
+  rdfs:range xsd:anyURI ;
+  rdfs:label "endpoint URL" ;
+  rdfs:comment
+    "Base URL for the A2A server endpoint (remote agent). Clients send task-oriented messages here." ;
+.
+
+beast:agentCardUrl
+  a owl:DatatypeProperty ;
+  rdfs:domain beast:A2AChannel ;
+  rdfs:range xsd:anyURI ;
+  rdfs:label "agent card URL" ;
+  rdfs:comment
+    "Well-known URL for retrieving an A2A Agent Card (public or authenticated variant, depending on deployment)." ;
+.
+
+beast:requiresAuthentication
+  a owl:DatatypeProperty ;
+  rdfs:domain beast:A2AChannel ;
+  rdfs:range xsd:boolean ;
+  rdfs:label "requires authentication" ;
+  rdfs:comment
+    "Whether the A2A endpoint and/or agent card require authentication." ;
+.
+
+beast:authScheme
+  a owl:DatatypeProperty ;
+  rdfs:domain beast:A2AChannel ;
+  rdfs:range xsd:string ;
+  rdfs:label "auth scheme" ;
+  rdfs:comment
+    "Human-readable auth scheme identifier (e.g., 'OAuth2', 'mTLS', 'APIKey', 'Basic'). Keep it descriptive; enforcement belongs to deployment config." ;
+.
+
+beast:supportsStreaming
+  a owl:DatatypeProperty ;
+  rdfs:domain beast:A2AChannel ;
+  rdfs:range xsd:boolean ;
+  rdfs:label "supports streaming" ;
+  rdfs:comment
+    "Whether this A2A channel supports streaming responses/events (implementation-specific)." ;
+.
+
+# Operation endpoints (optional, for explicit modeling)
+beast:opMessageSendPath
+  a owl:DatatypeProperty ;
+  rdfs:domain beast:A2AChannel ;
+  rdfs:range xsd:string ;
+  rdfs:label "op message send path" ;
+  rdfs:comment
+    "Relative path for the A2A 'send message / start task' operation (if modeled explicitly)." ;
+.
+
+beast:opGetTaskPath
+  a owl:DatatypeProperty ;
+  rdfs:domain beast:A2AChannel ;
+  rdfs:range xsd:string ;
+  rdfs:label "op get task path" ;
+  rdfs:comment
+    "Relative path for the A2A 'get task status/artifacts' operation (if modeled explicitly)." ;
+.
+
+beast:opCancelTaskPath
+  a owl:DatatypeProperty ;
+  rdfs:domain beast:A2AChannel ;
+  rdfs:range xsd:string ;
+  rdfs:label "op cancel task path" ;
+  rdfs:comment
+    "Relative path for the A2A 'cancel task' operation (if modeled explicitly)." ;
+.
+
+beast:opAuthenticatedAgentCardPath
+  a owl:DatatypeProperty ;
+  rdfs:domain beast:A2AChannel ;
+  rdfs:range xsd:string ;
+  rdfs:label "op authenticated agent card path" ;
+  rdfs:comment
+    "Relative path for retrieving an authenticated Agent Card variant (if supported)." ;
+.
+
+#################################################################
+# Linking Agents to A2A Channels and AgentCard Projections
+#################################################################
+
+beast:exposesA2AChannel
+  a owl:ObjectProperty ;
+  rdfs:domain beast:Agent ;
+  rdfs:range beast:A2AChannel ;
+  rdfs:label "exposes A2A channel" ;
+  rdfs:comment
+    "An agent exposes itself externally via an A2AChannel (edge transport). This is how you publish an agent for other stacks/vendors to call." ;
+.
+
+beast:consumesA2AChannel
+  a owl:ObjectProperty ;
+  rdfs:domain beast:Agent ;
+  rdfs:range beast:A2AChannel ;
+  rdfs:label "consumes A2A channel" ;
+  rdfs:comment
+    "An agent consumes a remote agent via an A2AChannel. Useful for modeling remote capabilities as if they were local." ;
+.
+
+beast:hasAgentCardProjection
+  a owl:ObjectProperty ;
+  rdfs:domain beast:Agent ;
+  rdfs:range beast:AgentCardProjection ;
+  rdfs:label "has agent card projection" ;
+  rdfs:comment
+    "Links an agent to an RDF projection of its Agent Card semantics (identity, skills, etc.)." ;
+.
+
+#################################################################
+# AgentCardProjection core fields
+#################################################################
+
+beast:cardName
+  a owl:DatatypeProperty ;
+  rdfs:domain beast:AgentCardProjection ;
+  rdfs:range xsd:string ;
+  rdfs:label "card name" ;
+  rdfs:comment
+    "Agent identity name as published in the Agent Card." ;
+.
+
+beast:cardDescription
+  a owl:DatatypeProperty ;
+  rdfs:domain beast:AgentCardProjection ;
+  rdfs:range xsd:string ;
+  rdfs:label "card description" ;
+  rdfs:comment
+    "Human-readable description as published in the Agent Card." ;
+.
+
+beast:cardProvider
+  a owl:DatatypeProperty ;
+  rdfs:domain beast:AgentCardProjection ;
+  rdfs:range xsd:string ;
+  rdfs:label "card provider" ;
+  rdfs:comment
+    "Optional provider/organization label for the agent card." ;
+.
+
+beast:cardVersion
+  a owl:DatatypeProperty ;
+  rdfs:domain beast:AgentCardProjection ;
+  rdfs:range xsd:string ;
+  rdfs:label "card version" ;
+  rdfs:comment
+    "Agent Card version string (useful when cards evolve over time)." ;
+.
+
+#################################################################
+# Skills (A2A) modeled as first-class resources
+#################################################################
+
+beast:A2ASkill
+  a owl:Class ;
+  rdfs:label "A2A Skill" ;
+  rdfs:comment
+    "A skill entry as published by A2A Agent Cards. Usually maps well to Beast capabilities or task-types." ;
+.
+
+beast:publishesSkill
+  a owl:ObjectProperty ;
+  rdfs:domain beast:AgentCardProjection ;
+  rdfs:range beast:A2ASkill ;
+  rdfs:label "publishes skill" ;
+  rdfs:comment
+    "Agent Card projection publishes one or more A2A skills." ;
+.
+
+beast:skillId
+  a owl:DatatypeProperty ;
+  rdfs:domain beast:A2ASkill ;
+  rdfs:range xsd:string ;
+  rdfs:label "skill id" ;
+  rdfs:comment
+    "Stable identifier for the skill (string)." ;
+.
+
+beast:skillName
+  a owl:DatatypeProperty ;
+  rdfs:domain beast:A2ASkill ;
+  rdfs:range xsd:string ;
+  rdfs:label "skill name" ;
+  rdfs:comment
+    "Human-readable name for the skill." ;
+.
+
+beast:skillDescription
+  a owl:DatatypeProperty ;
+  rdfs:domain beast:A2ASkill ;
+  rdfs:range xsd:string ;
+  rdfs:label "skill description" ;
+  rdfs:comment
+    "Human-readable description for the skill." ;
+.
+
+beast:skillTag
+  a owl:DatatypeProperty ;
+  rdfs:domain beast:A2ASkill ;
+  rdfs:range xsd:string ;
+  rdfs:label "skill tag" ;
+  rdfs:comment
+    "Optional tags/keywords for skill matching." ;
+.
+
+#################################################################
+# Optional: Alignment hooks (skills -> Beast capabilities)
+#################################################################
+
+beast:alignedCapability
+  a owl:ObjectProperty ;
+  rdfs:domain beast:A2ASkill ;
+  rdfs:range beast:Capability ;
+  rdfs:label "aligned capability" ;
+  rdfs:comment
+    "Connect an A2A skill to a Beast capability for internal planning/matching. Use when you want remote skills to be discoverable by Beast orchestration." ;
+.

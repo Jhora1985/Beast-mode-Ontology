@@ -1,0 +1,26 @@
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix beast: <https://example.org/beast#> .
+
+# Example: an agent exposed externally via A2A
+beast:AllianceRfiAnalystAgent
+  a beast:Agent ;
+  beast:exposesA2AChannel beast:GtsA2AEndpoint ;
+  beast:hasAgentCardProjection beast:AllianceRfiAnalystCard ;
+.
+
+beast:GtsA2AEndpoint
+  a beast:A2AChannel ;
+  beast:endpointUrl "https://partner.example.com/a2a"^^xsd:anyURI ;
+  beast:agentCardUrl "https://partner.example.com/.well-known/agent-card.json"^^xsd:anyURI ;
+  beast:requiresAuthentication true ;
+  beast:authScheme "OAuth2" ;
+  beast:supportsStreaming true ;
+.
+
+beast:AllianceRfiAnalystCard
+  a beast:AgentCardProjection ;
+  beast:cardName "Alliance RFI Analyst" ;
+  beast:cardDescription "Analyzes RFI/RFP text, extracts obligations/capabilities, and produces structured summaries and risk notes." ;
+  beast:cardProvider "Beast Mode Ecosystem" ;
+  beast:cardVersion "0.1.0" ;
+.
