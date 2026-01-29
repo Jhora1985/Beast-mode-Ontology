@@ -6,115 +6,158 @@ The core ontology for the Beast Mode ecosystem, defining how agents, capabilitie
 
 Beast Mode is a declarative, ontology-first framework for modeling agents, what they are capable of, and the tasks those capabilities enable.
 
-Rather than treating agents as opaque executors or relying on implicit inference, Beast Mode emphasizes **explicit structure**:
+Rather than treating agents as opaque executors or relying on implicit inference, Beast Mode emphasizes explicit structure:
 
-- Agents declare capabilities  
-- Capabilities enable tasks  
-- Tasks define clear inputs and outputs  
-- Relationships are validated, not assumed  
+- Agents declare capabilities
+- Capabilities enable tasks
+- Tasks define clear inputs and outputs
+- Relationships are validated, not assumed
 
-This core ontology establishes the foundational vocabulary and constraints for the Beast Mode ecosystem. It is intentionally minimal, focusing on *what exists* and *how it may relate*, not on execution, orchestration, or runtime behavior.
+This core ontology establishes the foundational vocabulary and constraints for the Beast Mode ecosystem. It is intentionally minimal, focusing on what exists and how it may relate, not on execution, orchestration, or runtime behavior.
 
-The ontology is implemented in **Turtle (TTL)** with **SHACL (Shapes Constraint Language)** constraints, allowing systems to validate data correctness, completeness, and architectural intent before any execution layer is involved.
-
----
+The ontology is implemented in Turtle (TTL) with SHACL (Shapes Constraint Language) constraints, allowing systems to validate data correctness, completeness, and architectural intent before any execution layer is involved.
 
 ## Design Principles
 
-The Beast Mode Core Ontology is guided by a small set of design principles:
-
-- **Declarative over inferred**  
+- Declarative over inferred  
   All relationships are explicitly stated. Inference is a downstream concern.
 
-- **Validation before execution**  
-  SHACL constraints act as architectural guardrails, ensuring data correctness and intent alignment.
+- Validation before execution  
+  SHACL constraints act as architectural guardrails.
 
-- **Separation of concerns**  
-  This ontology defines structure and meaning only. Messaging, networking, and execution live elsewhere.
+- Separation of concerns  
+  This ontology defines structure and meaning only.
 
-- **Composable, not monolithic**  
-  The core ontology is designed to be extended by additional vocabularies and implementation layers.
+- Composable, not monolithic  
+  The core ontology is designed to be extended.
 
----
+## What This Ontology Is and Is Not
 
-## What This Ontology Is (and Is Not)
-
-**This ontology is:**
+This ontology is:
 - A semantic model for agents, capabilities, and tasks
 - A shared vocabulary for aligning humans and systems
 - A validation layer for architectural correctness
 
-**This ontology is not:**
+This ontology is not:
 - An agent runtime
 - A workflow engine
-- An orchestration or scheduling system
+- An orchestration system
 - An execution framework
-
----
 
 ## Core Entities
 
 ### Agent
+
 An autonomous or semi-autonomous actor in Beast Mode. Agents possess capabilities that enable them to perform various tasks.
 
-**Required Properties:**
-- `name` (string): Human-readable name
-- `hasCapability` (Capability): At least one capability (one-to-many)
+Required properties:
+- name (string)
+- hasCapability (Capability), one or more
 
-**Optional Properties:**
-- `description` (string): Detailed description
-- `id` (string): Unique identifier
-- `version` (string): Version identifier
-- `status` (string): Status (active, deprecated, draft, archived)
-- `tags` (string): Tags or keywords
-- `createdAt` (dateTime): Creation timestamp
-- `updatedAt` (dateTime): Last update timestamp
-
----
+Optional properties:
+- description
+- id
+- version
+- status
+- tags
+- createdAt
+- updatedAt
 
 ### Capability
-A bounded skill that an agent can perform. Capabilities serve as the bridge between agents and the tasks they can execute.
 
-**Required Properties:**
-- `name` (string): Human-readable name
-- `enablesTask` (Task): At least one enabled task (one-to-many)
+A bounded skill that an agent can perform. Capabilities serve as the bridge between agents and tasks.
 
-**Optional Properties:**
-- `description` (string): Detailed description
-- `id` (string): Unique identifier
-- `version` (string): Version identifier
-- `status` (string): Status (active, deprecated, draft, archived)
-- `tags` (string): Tags or keywords
-- `createdAt` (dateTime): Creation timestamp
-- `updatedAt` (dateTime): Last update timestamp
+Required properties:
+- name (string)
+- enablesTask (Task), one or more
 
----
+Optional properties:
+- description
+- id
+- version
+- status
+- tags
+- createdAt
+- updatedAt
 
 ### Task
-A unit of work with a clear input and output. Tasks represent the atomic operations that agents can perform through their capabilities.
 
-**Required Properties:**
-- `name` (string): Human-readable name
-- `hasInput` (string): Description of required input
-- `hasOutput` (string): Description of produced output
-- `requiresCapability` (Capability): Exactly one required capability
+A unit of work with a clear input and output.
 
-**Optional Properties:**
-- `description` (string): Detailed description
-- `id` (string): Unique identifier
-- `version` (string): Version identifier
-- `status` (string): Status (active, deprecated, draft, archived)
-- `tags` (string): Tags or keywords
-- `createdAt` (dateTime): Creation timestamp
-- `updatedAt` (dateTime): Last update timestamp
+Required properties:
+- name (string)
+- hasInput (string)
+- hasOutput (string)
+- requiresCapability (Capability), exactly one
 
----
+Optional properties:
+- description
+- id
+- version
+- status
+- tags
+- createdAt
+- updatedAt
 
 ## Relationships
 
-- **Agent → Capability** (`hasCapability`): One-to-many  
-- **Capability → Task** (`enablesTask`): One-to-many  
-- **Task → Capability** (`requiresCapability`): Many-to-one (inverse of enablesTask)  
-- **Agent → Task** (`performsTask`): Derived relationship through capabilities  
+- Agent to Capability: hasCapability (one to many)
+- Capability to Task: enablesTask (one to many)
+- Task to Capability: requiresCapability (many to one)
+- Agent to Task: derived through capabilities
 
-### Conceptual Structure
+Conceptual structure:
+
+Agent
+  hasCapability -> Capability
+    enablesTask -> Task
+      requiresCapability -> Capability
+
+## Files
+
+- beast_mode_ontology.ttl
+- beast_mode_examples.ttl
+- beast_mode_core.md
+- README.md
+
+## Usage
+
+Loading the ontology with Apache Jena:
+
+riot --validate beast_mode_ontology.ttl
+
+Loading with rdflib in Python:
+
+from rdflib import Graph  
+g = Graph()  
+g.parse("beast_mode_ontology.ttl", format="turtle")
+
+## SHACL Validation
+
+The ontology includes SHACL shapes for validating:
+
+- Node shapes for Agent, Capability, and Task
+- Property and cardinality constraints
+- Datatype validation
+- Enumerated status values
+
+## Example Instances
+
+See beast_mode_examples.ttl for examples demonstrating the Agent to Capability to Task pattern.
+
+## Extending the Ontology
+
+To extend this ontology:
+
+1. Add new classes or subclasses in separate modules
+2. Define additional properties
+3. Extend SHACL shapes for new constraints
+4. Keep execution logic out of the core
+
+## Contributing
+
+Contributions are welcome. Please keep extensions explicit and modular.
+
+## License
+
+Add license information here
