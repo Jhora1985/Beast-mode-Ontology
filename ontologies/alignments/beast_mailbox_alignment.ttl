@@ -1,0 +1,19 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+
+@prefix bmmsg: <http://example.org/beast-messaging#> .
+@prefix mailbox: <http://example.org/beast-mailbox#> .  # TODO: replace with real mailbox-core namespace
+
+bmmsg:MailboxAlignment
+  a owl:Ontology ;
+  rdfs:label "Beast Messaging ↔ Beast Mailbox Alignment" ;
+  rdfs:comment "Populate with owl:equivalentClass / owl:equivalentProperty after confirming beast-mailbox-core vocabulary." .
+
+# Examples (activate after confirming real mailbox-core terms)
+# bmmsg:Message  owl:equivalentClass mailbox:Message .
+# bmmsg:Envelope owl:equivalentClass mailbox:Envelope .
+# bmmsg:sender   owl:equivalentProperty mailbox:sender .
+# bmmsg:receiver owl:equivalentProperty mailbox:receiver .
+# bmmsg:hasEnvelope owl:equivalentProperty mailbox:hasEnvelope .
+# bmmsg:correlationId owl:equivalentProperty mailbox:correlationId .
+# bmmsg:timestamp     owl:equalentProperty mailbox:timestamp .

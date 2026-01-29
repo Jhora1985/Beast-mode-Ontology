@@ -1,0 +1,19 @@
+@prefix :     <http://example.org/beast-mode#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+
+@prefix bmmsg: <http://example.org/beast-messaging#> .
+
+:emitsMessage a owl:ObjectProperty ;
+  rdfs:label "emits message" ;
+  rdfs:domain :Agent ;
+  rdfs:range bmmsg:Message ;
+  rdfs:comment "Agent emits a message into the Beast messaging system." ;
+  rdfs:isDefinedBy : .
+
+:consumesMessage a owl:ObjectProperty ;
+  rdfs:label "consumes message" ;
+  rdfs:domain :Agent ;
+  rdfs:range bmmsg:Message ;
+  rdfs:comment "Agent consumes a message from the Beast messaging system." ;
+  rdfs:isDefinedBy : .

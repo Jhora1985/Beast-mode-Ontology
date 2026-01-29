@@ -1,0 +1,60 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+
+@prefix bmnet: <http://example.org/beast-network#> .
+@prefix bmmsg: <http://example.org/beast-messaging#> .
+
+bmnet:BeastNetworkCore
+  a owl:Ontology ;
+  rdfs:label "Beast Network Core" ;
+  rdfs:comment "Network concept for Beast Mode: nodes/links/roles/policy hooks." .
+
+bmnet:BeastNetwork a owl:Class ;
+  rdfs:label "Beast Network" .
+
+bmnet:Node a owl:Class ;
+  rdfs:label "Node" ;
+  rdfs:comment "Participant in the network (agent/service/etc.)." .
+
+bmnet:Link a owl:Class ;
+  rdfs:label "Link" ;
+  rdfs:comment "Connection between nodes; can be tied to a channel and policies." .
+
+bmnet:NetworkRole a owl:Class ;
+  rdfs:label "Network Role" .
+
+bmnet:Policy a owl:Class ;
+  rdfs:label "Policy" .
+
+bmnet:hasNode a owl:ObjectProperty ;
+  rdfs:domain bmnet:BeastNetwork ;
+  rdfs:range bmnet:Node .
+
+bmnet:hasLink a owl:ObjectProperty ;
+  rdfs:domain bmnet:BeastNetwork ;
+  rdfs:range bmnet:Link .
+
+bmnet:linkFrom a owl:ObjectProperty ;
+  rdfs:domain bmnet:Link ;
+  rdfs:range bmnet:Node .
+
+bmnet:linkTo a owl:ObjectProperty ;
+  rdfs:domain bmnet:Link ;
+  rdfs:range bmnet:Node .
+
+bmnet:usesChannel a owl:ObjectProperty ;
+  rdfs:domain bmnet:Link ;
+  rdfs:range bmmsg:Channel .
+
+bmnet:hasRole a owl:ObjectProperty ;
+  rdfs:domain bmnet:Node ;
+  rdfs:range bmnet:NetworkRole .
+
+bmnet:hasPolicy a owl:ObjectProperty ;
+  rdfs:domain bmnet:BeastNetwork ;
+  rdfs:range bmnet:Policy .
+
+bmnet:linkPolicy a owl:ObjectProperty ;
+  rdfs:domain bmnet:Link ;
+  rdfs:range bmnet:Policy .

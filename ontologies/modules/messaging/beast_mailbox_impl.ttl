@@ -1,0 +1,69 @@
+@prefix :     <http://example.org/beast-mode#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+
+@prefix bmmsg: <http://example.org/beast-messaging#> .
+@prefix mailbox: <http://example.org/beast-mailbox#> .
+
+mailbox:BeastMailboxImpl
+  a owl:Ontology ;
+  rdfs:label "Beast Mailbox Core Implementation Model" ;
+  rdfs:comment "Models the beast-mailbox-core (Python/Redis) messaging implementation and aligns it to the Beast Messaging Core bow-tie knot." .
+
+### Implementation concepts (keep these close to reality)
+
+mailbox:MailboxMessage
+  a owl:Class ;
+  rdfs:label "Mailbox Message" ;
+  rdfs:comment "A message as represented/handled by beast-mailbox-core." ;
+  rdfs:subClassOf bmmsg:Message .
+
+mailbox:RedisStreamChannel
+  a owl:Class ;
+  rdfs:label "Redis Stream Channel" ;
+  rdfs:comment "A channel implemented using Redis streams (or similar Redis-backed mechanism)." ;
+  rdfs:subClassOf bmmsg:Channel .
+
+mailbox:Consumer
+  a owl:Class ;
+  rdfs:label "Consumer" ;
+  rdfs:comment "A consumer instance that reads messages from a channel." .
+
+mailbox:ConsumerGroup
+  a owl:Class ;
+  rdfs:label "Consumer Group" ;
+  rdfs:comment "A group of consumers sharing work from a channel." .
+
+mailbox:DeadLetterChannel
+  a owl:Class ;
+  rdfs:label "Dead Letter Channel" ;
+  rdfs:comment "A channel that stores messages that failed delivery/processing." ;
+  rdfs:subClassOf bmmsg:Channel .
+
+### Implementation properties (hooks to map to the knot)
+
+mailbox:implementedAs
+  a owl:ObjectProperty ;
+  rdfs:label "implemented as" ;
+  rdfs:comment "Maps an abstract messaging concept to its beast-mailbox-core implementation concept." .
+
+mailbox:usesChannel
+  a owl:ObjectProperty ;
+  rdfs:label "uses channel" ;
+  rdfs:comment "Associates a consumer/group with the channel it reads from." ;
+  rdfs:range bmmsg:Channel .
+
+mailbox:hasConsumerGroup
+  a owl:ObjectProperty ;
+  rdfs:label "has consumer group" ;
+  rdfs:comment "Associates a channel with a consumer group." ;
+  rdfs:domain bmmsg:Channel ;
+  rdfs:range mailbox:ConsumerGroup .
+
+mailbox:acknowledges
+  a owl:ObjectProperty ;
+  rdfs:label "acknowledges" ;
+  rdfs:comment "Consumer acknowledges message processing (maps to bmmsg:Acked state semantics)." ;
+  rdfs:domain mailbox:Consumer ;
+  rdfs:range bmmsg:Message .
