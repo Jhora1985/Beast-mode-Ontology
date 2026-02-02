@@ -1,0 +1,25 @@
+@prefix : <http://example.org/beast-mode#> .
+@prefix ex: <http://example.org/example#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+#######################################################################
+# Example: Agent + Capability + Specialty
+#######################################################################
+
+# Example capability and task
+ex:StaticCodeAnalysis a :Capability ;
+  :enablesTask ex:ScanSourceCode .
+
+ex:ScanSourceCode a :Task ;
+  :requiresCapability ex:StaticCodeAnalysis .
+
+# Example agent
+ex:SecureScanBot a :Agent ;
+  :hasCapability ex:StaticCodeAnalysis .
+
+# Specialty assertion: this agent is particularly strong at this capability
+ex:SecureScanBot_StaticCodeAnalysis_Specialty a :SpecialtyAssertion ;
+  :forAgent ex:SecureScanBot ;
+  :forCapability ex:StaticCodeAnalysis ;
+  :specialtyLevel 5 ;
+  :confidence 0.85 .

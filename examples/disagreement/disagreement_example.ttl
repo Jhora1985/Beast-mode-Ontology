@@ -1,0 +1,48 @@
+@prefix : <http://example.org/beast-mode#> .
+@prefix ex: <http://example.org/example#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+#######################################################################
+# Example: Two specialty beasts disagree on a task interpretation
+#######################################################################
+
+# Task in question
+ex:InterpretSpec a :Task .
+
+# Two agents with different specialties
+ex:SpecParserBot a :Agent .
+ex:DomainExpertBot a :Agent .
+
+# Dispute about interpretation
+ex:SpecInterpretationDispute a :Dispute ;
+  :disputeType "translation" ;
+  :aboutTask ex:InterpretSpec ;
+  :hasClaim ex:ClaimA , ex:ClaimB .
+
+# Claim from first agent
+ex:ClaimA a :Claim ;
+  :assertedBy ex:SpecParserBot ;
+  :claimText "Specification indicates tolerance is ±0.01 mm." ;
+  :claimConfidence 0.92 .
+
+# Claim from second agent
+ex:ClaimB a :Claim ;
+  :assertedBy ex:DomainExpertBot ;
+  :claimText "Specification implies ±0.005 mm based on industry context." ;
+  :claimConfidence 0.75 .
+
+#######################################################################
+# Resolution policy + outcome (example)
+#######################################################################
+
+# Policy: translation disputes should escalate for human review
+ex:EscalateTranslationDisputes a :ResolutionPolicy ;
+  :claimText "If disputeType is translation or interpretation, escalate to human review unless claims are identical and confidence >= 0.95." .
+
+# Resolution: this dispute is escalated (no automated winner)
+ex:SpecInterpretationResolution a :Resolution ;
+  :resolvedBy ex:HumanReviewer ;
+  :usesPolicy ex:EscalateTranslationDisputes .
+
+# Attach resolution to dispute
+ex:SpecInterpretationDispute :hasResolution ex:SpecInterpretationResolution .

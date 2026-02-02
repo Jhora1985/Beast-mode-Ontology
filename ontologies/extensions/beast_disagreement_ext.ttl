@@ -1,0 +1,154 @@
+@prefix : <http://example.org/beast-mode#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+#######################################################################
+# Disagreement / Resolution Extension Ontology
+#######################################################################
+
+<http://example.org/beast-mode-disagreement> a owl:Ontology ;
+  rdfs:label "Beast Mode Disagreement & Resolution Extension" ;
+  rdfs:comment "Extension ontology for representing disagreements between agents (specialty beasts) and capturing resolution decisions with traceable evidence." ;
+  owl:imports <http://example.org/beast-mode#> ;
+  owl:versionInfo "0.1.0" ;
+  dcterms:created "2024-01-01T00:00:00"^^xsd:dateTime .
+
+#######################################################################
+# Classes
+#######################################################################
+
+:Dispute a owl:Class ;
+  rdfs:label "Dispute" ;
+  rdfs:comment "A recorded disagreement about a question, classification, translation, or decision relevant to task routing or outputs." ;
+  rdfs:isDefinedBy <http://example.org/beast-mode-disagreement> .
+
+:Claim a owl:Class ;
+  rdfs:label "Claim" ;
+  rdfs:comment "An agent's asserted answer/position within a dispute, optionally supported by evidence and confidence." ;
+  rdfs:isDefinedBy <http://example.org/beast-mode-disagreement> .
+
+:Resolution a owl:Class ;
+  rdfs:label "Resolution" ;
+  rdfs:comment "The decided outcome of a dispute, including who/what resolved it and why." ;
+  rdfs:isDefinedBy <http://example.org/beast-mode-disagreement> .
+
+:ResolutionPolicy a owl:Class ;
+  rdfs:label "Resolution Policy" ;
+  rdfs:comment "A policy describing how disputes should be resolved (e.g., prefer higher specialty, require evidence, escalate to human)." ;
+  rdfs:isDefinedBy <http://example.org/beast-mode-disagreement> .
+
+#######################################################################
+# Datatype Properties
+#######################################################################
+
+:claimText a owl:DatatypeProperty ;
+  rdfs:label "claim text" ;
+  rdfs:comment "Human-readable representation of the claim/answer." ;
+  rdfs:domain :Claim ;
+  rdfs:range xsd:string ;
+  rdfs:isDefinedBy <http://example.org/beast-mode-disagreement> .
+
+:claimConfidence a owl:DatatypeProperty ;
+  rdfs:label "claim confidence" ;
+  rdfs:comment "Confidence in this claim (0.0 to 1.0)." ;
+  rdfs:domain :Claim ;
+  rdfs:range xsd:decimal ;
+  rdfs:isDefinedBy <http://example.org/beast-mode-disagreement> .
+
+:disputeType a owl:DatatypeProperty ;
+  rdfs:label "dispute type" ;
+  rdfs:comment "Category of dispute (e.g., translation, interpretation, classification, routing)." ;
+  rdfs:domain :Dispute ;
+  rdfs:range xsd:string ;
+  rdfs:isDefinedBy <http://example.org/beast-mode-disagreement> .
+
+#######################################################################
+# Object Properties
+#######################################################################
+
+:aboutTask a owl:ObjectProperty ;
+  rdfs:label "about task" ;
+  rdfs:comment "Links a dispute to the task context (if applicable)." ;
+  rdfs:domain :Dispute ;
+  rdfs:range :Task ;
+  rdfs:isDefinedBy <http://example.org/beast-mode-disagreement> .
+
+:hasClaim a owl:ObjectProperty ;
+  rdfs:label "has claim" ;
+  rdfs:domain :Dispute ;
+  rdfs:range :Claim ;
+  rdfs:isDefinedBy <http://example.org/beast-mode-disagreement> .
+
+:assertedBy a owl:ObjectProperty ;
+  rdfs:label "asserted by" ;
+  rdfs:domain :Claim ;
+  rdfs:range :Agent ;
+  rdfs:isDefinedBy <http://example.org/beast-mode-disagreement> .
+
+:basedOnEvidence a owl:ObjectProperty ;
+  rdfs:label "based on evidence" ;
+  rdfs:comment "Evidence artifacts supporting a claim (benchmarks, logs, citations, traces)." ;
+  rdfs:domain :Claim ;
+  rdfs:range rdfs:Resource ;
+  rdfs:isDefinedBy <http://example.org/beast-mode-disagreement> .
+
+:resolvedBy a owl:ObjectProperty ;
+  rdfs:label "resolved by" ;
+  rdfs:comment "Who/what resolved the dispute (agent or human proxy)." ;
+  rdfs:domain :Resolution ;
+  rdfs:range rdfs:Resource ;
+  rdfs:isDefinedBy <http://example.org/beast-mode-disagreement> .
+
+:usesPolicy a owl:ObjectProperty ;
+  rdfs:label "uses policy" ;
+  rdfs:domain :Resolution ;
+  rdfs:range :ResolutionPolicy ;
+  rdfs:isDefinedBy <http://example.org/beast-mode-disagreement> .
+
+:hasResolution a owl:ObjectProperty ;
+  rdfs:label "has resolution" ;
+  rdfs:domain :Dispute ;
+  rdfs:range :Resolution ;
+  rdfs:isDefinedBy <http://example.org/beast-mode-disagreement> .
+
+#######################################################################
+# SHACL Shapes
+#######################################################################
+
+:DisputeShape a sh:NodeShape ;
+  sh:targetClass :Dispute ;
+  sh:property [
+    sh:path :hasClaim ;
+    sh:minCount 2 ;
+    sh:class :Claim ;
+  ] ;
+  sh:property [
+    sh:path :disputeType ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+  ] .
+
+:ClaimShape a sh:NodeShape ;
+  sh:targetClass :Claim ;
+  sh:property [
+    sh:path :assertedBy ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:class :Agent ;
+  ] ;
+  sh:property [
+    sh:path :claimText ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+  ] ;
+  sh:property [
+    sh:path :claimConfidence ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:decimal ;
+    sh:minInclusive 0.0 ;
+    sh:maxInclusive 1.0 ;
+  ] .

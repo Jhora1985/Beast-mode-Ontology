@@ -1,0 +1,102 @@
+@prefix : <http://example.org/beast-mode#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+#######################################################################
+# Specialty Extension Ontology
+#######################################################################
+
+<http://example.org/beast-mode-specialty> a owl:Ontology ;
+  rdfs:label "Beast Mode Specialty Extension" ;
+  rdfs:comment "Extension ontology defining Specialty as an elevated proficiency relationship between an Agent and a Capability." ;
+  owl:imports <http://example.org/beast-mode#> ;
+  owl:versionInfo "0.1.0" ;
+  dcterms:created "2024-01-01T00:00:00"^^xsd:dateTime .
+
+#######################################################################
+# Classes
+#######################################################################
+
+:SpecialtyAssertion a owl:Class ;
+  rdfs:label "Specialty Assertion" ;
+  rdfs:comment "An assertion that an Agent has elevated proficiency (a specialty) for a specific Capability. Does not imply mastery." ;
+  rdfs:isDefinedBy <http://example.org/beast-mode-specialty> .
+
+#######################################################################
+# Datatype Properties
+#######################################################################
+
+:specialtyLevel a owl:DatatypeProperty ;
+  rdfs:label "specialty level" ;
+  rdfs:comment "Ordinal level indicating elevated proficiency for a capability (e.g., 1-5). Not mastery." ;
+  rdfs:domain :SpecialtyAssertion ;
+  rdfs:range xsd:integer ;
+  rdfs:isDefinedBy <http://example.org/beast-mode-specialty> .
+
+:confidence a owl:DatatypeProperty ;
+  rdfs:label "confidence" ;
+  rdfs:comment "Confidence in the specialty assertion (0.0 to 1.0). Optional." ;
+  rdfs:domain :SpecialtyAssertion ;
+  rdfs:range xsd:decimal ;
+  rdfs:isDefinedBy <http://example.org/beast-mode-specialty> .
+
+#######################################################################
+# Object Properties
+#######################################################################
+
+:forAgent a owl:ObjectProperty ;
+  rdfs:label "for agent" ;
+  rdfs:domain :SpecialtyAssertion ;
+  rdfs:range :Agent ;
+  rdfs:isDefinedBy <http://example.org/beast-mode-specialty> .
+
+:forCapability a owl:ObjectProperty ;
+  rdfs:label "for capability" ;
+  rdfs:domain :SpecialtyAssertion ;
+  rdfs:range :Capability ;
+  rdfs:isDefinedBy <http://example.org/beast-mode-specialty> .
+
+:basedOnEvidence a owl:ObjectProperty ;
+  rdfs:label "based on evidence" ;
+  rdfs:comment "Links to evidence artifacts (benchmarks, eval runs, human reviews, logs). Optional." ;
+  rdfs:domain :SpecialtyAssertion ;
+  rdfs:range rdfs:Resource ;
+  rdfs:isDefinedBy <http://example.org/beast-mode-specialty> .
+
+#######################################################################
+# SHACL Shapes
+#######################################################################
+
+:SpecialtyAssertionShape a sh:NodeShape ;
+  sh:targetClass :SpecialtyAssertion ;
+  sh:property [
+    sh:path :forAgent ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:class :Agent ;
+  ] ;
+  sh:property [
+    sh:path :forCapability ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:class :Capability ;
+  ] ;
+  sh:property [
+    sh:path :specialtyLevel ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:integer ;
+    sh:minInclusive 1 ;
+    sh:maxInclusive 5 ;
+  ] ;
+  sh:property [
+    sh:path :confidence ;
+    sh:maxCount 1 ;
+    sh:datatype xsd:decimal ;
+    sh:minInclusive 0.0 ;
+    sh:maxInclusive 1.0 ;
+  ] .
