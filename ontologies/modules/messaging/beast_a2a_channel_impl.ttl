@@ -6,6 +6,7 @@
 @prefix beast:     <https://example.org/beast#> .
 @prefix messaging: <https://example.org/beast/messaging#> .
 @prefix network:   <https://example.org/beast/network#> .
+@prefix beast_a2a_channel_impl: <https://example.org/beast/messaging/a2a-impl#> .
 
 #################################################################
 # Beast Mode: A2A Channel Implementation
