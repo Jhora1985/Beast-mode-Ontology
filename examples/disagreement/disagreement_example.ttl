@@ -7,11 +7,25 @@
 #######################################################################
 
 # Task in question
-ex:InterpretSpec a :Task .
+ex:InterpretSpec a :Task ;
+  :name "Interpret Specification" ;
+  :hasInput "Specification document" ;
+  :hasOutput "Interpretation result" ;
+  :requiresCapability ex:SpecInterpretation .
+
+# Capability (needed for the task)
+ex:SpecInterpretation a :Capability ;
+  :name "Specification Interpretation" ;
+  :enablesTask ex:InterpretSpec .
 
 # Two agents with different specialties
-ex:SpecParserBot a :Agent .
-ex:DomainExpertBot a :Agent .
+ex:SpecParserBot a :Agent ;
+  :name "Spec Parser Bot" ;
+  :hasCapability ex:SpecInterpretation .
+
+ex:DomainExpertBot a :Agent ;
+  :name "Domain Expert Bot" ;
+  :hasCapability ex:SpecInterpretation .
 
 # Dispute about interpretation
 ex:SpecInterpretationDispute a :Dispute ;
